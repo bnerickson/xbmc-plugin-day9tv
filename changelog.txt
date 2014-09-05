@@ -1,3 +1,7 @@
+v2.1.6
+- Fixed description crash.
+- Fixed search crash.
+
 v2.1.5
 - fixed encoding issues again caused by quoted '+' in the base64. (patch from cpher)
   Scrapes links when videos are not embedded (cpher)
