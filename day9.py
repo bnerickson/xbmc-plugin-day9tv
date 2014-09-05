@@ -34,7 +34,7 @@ class Day9:
     # display the root menu
     def root(self):
         self.addCategory(self.__language__(31000), 'http://day9.tv/archives', 'showTitles')
-        self.addCategory(self.__language__(31002), '', 'showSearch')
+        self.addCategory(self.__language__(31002), 'http://day9.tv/archives', 'showSearch')
         # these need to be dynamic
         self.addCategory('Funday Monday', 'http://day9.tv/archives?q=%22Funday%20Monday%22', 'showTitles')
         self.addCategory('Newbie Tuesday', 'http://day9.tv/archives?q=%22Newbie%20Tuesday%22', 'showTitles')
@@ -58,7 +58,7 @@ class Day9:
             listitem.addContextMenuItems(menu, replaceItems=True)
         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=listitem, isFolder=True)
 
-    def addVideo(self,title,youtubeid,description='',picture=''):
+    def addVideo(self,title,youtubeid,description,picture=''):
         url=sys.argv[0]+"?youtubeid="+youtubeid+"&action=showVideo"
         liz=xbmcgui.ListItem(title, iconImage="DefaultVideo.png", thumbnailImage="DefaultVideo.png")
         liz.setInfo( type="Video", infoLabels={ "Title": title, "Plot" : description } )
@@ -73,7 +73,7 @@ class Day9:
         save = xbmcgui.Dialog().yesno(self.__language__(32010), self.__language__(32015) % search)
         if save:
             self.saveSearch(search)
-        params['url']='http://day9.tv/archives?q='+search
+        params['url']=base64.encodestring('http://day9.tv/archives?q='+search)
         self.showTitles(params=params)
 
     def showSearch(self, params = {}):
@@ -130,7 +130,7 @@ class Day9:
         for video in tree.findAll('iframe'):
             v=re.match('http://www.youtube.com/embed/(.*)', video.get('src'))
             i=i+1
-            self.addVideo(str(title)+' Part '+str(i), youtubeid=v.group(1), description=description)
+            self.addVideo(str(title)+' Part '+str(i), youtubeid=v.group(1), description=str(description).replace("<p>", "").replace("</p>", ""))
         if i == 0:
             # No embedded videos, try scraping links
             for L in tree.findAll('a'):
@@ -138,7 +138,7 @@ class Day9:
                 if m:
                     print "Matched"
                     vid_title = L.string if L.string is not None else 'Part %d'%i
-                    self.addVideo(str(title)+' - ' + vid_title, youtubeid=m.group(1), description=description)
+                    self.addVideo(str(title)+' - ' + vid_title, youtubeid=m.group(1), description=str(description).replace("<p>", "").replace("</p>", ""))
 
     def showVideo(self, params = {}):
         get = params.get
