@@ -128,7 +128,7 @@ class Day9:
             description = ''
         i=0
         for video in tree.findAll('iframe'):
-            v=re.match('http://www.youtube.com/embed/(.*)', video.get('src'))
+            v=re.match('//www.youtube.com/embed/(.*)', video.get('src'))
             i=i+1
             self.addVideo(str(title)+' Part '+str(i), youtubeid=v.group(1), description=str(description).replace("<p>", "").replace("</p>", ""))
         if i == 0:
